@@ -10,20 +10,21 @@ jobs:
     - name: "Python 3.6 on Ubuntu"
       os: linux
       python: 3.6
+      before_install:
+        - sudo apt-get install -y p7zip-full
     - name: "Python 3.7 on macOS 10.14"
       os: osx
       osx_image: xcode11.2
       language: shell
       before_install:
-        - brew install ffmpeg
-        - brew install cairo
-        - pip3 install pycairo --user
+        - brew install p7zip
     - name: "Python 3.7 on Windows"
       os: windows
       language: shell
       env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
       before_install:
          - choco install python --version 3.7.4
+         - choco install 7zip
 
 install:
   - pip3 install --upgrade pip || python -m pip install --upgrade pip --user
