@@ -30,6 +30,7 @@ class SevenZip:
         o = subprocess.check_output(
             [self.command, command, self.path, *args]
         )
+        assert b'Everything is Ok' in o
         return o.decode('utf-8')
 
     def rename(self, old_path: str, new_path: str):
@@ -99,6 +100,14 @@ class SevenZip:
     def delete(self, file_to_remove: str):
         return self._execute('d', file_to_remove)
 
-    def list_members(self, relative_to=None):
+    def list_members(self, relative_to=''):
         with ZipFile(self.path) as archive:
-            return archive.namelist()
+            return [
+                (
+                    member.split(relative_to + '/')[1]
+                    if relative_to else
+                    member
+                )
+                for member in archive.namelist()
+                if member.startswith(relative_to + '/' if relative_to else '')
+            ]

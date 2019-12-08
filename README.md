@@ -159,7 +159,7 @@ of the level of security offered by this package will be easier.
 
 Pre-requirements:
 - Python 3.6+
-- 7zip
+- 7zip (16.02+)
 
 Installation:
 
