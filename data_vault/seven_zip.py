@@ -42,13 +42,7 @@ class SevenZip:
     def __contains__(self, file_path: str):
         if not self.exists():
             return False
-        try:
-            self._execute('t', file_path)
-            return False
-        except subprocess.CalledProcessError as e:
-            #print(e)
-            #raise e
-            return True
+        return file_path in self.list_members()
 
     def _password_arg(self, password: str):
         """Set password argument for given argument:

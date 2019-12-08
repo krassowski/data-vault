@@ -5,6 +5,7 @@ from pandas.util.testing import assert_frame_equal
 from pytest import raises, fixture, warns, mark
 from IPython import get_ipython
 
+from data_vault import Vault, parse_arguments, VaultMagics
 from data_vault.seven_zip import file_from_storage
 from data_vault.frames import frame_manager
 
@@ -142,3 +143,16 @@ def test_del(tmpdir, mock_key, secure):
 
     with raises(KeyError, match="There is no item named 'my_frames/x' in the archive"):
         ipython.magic('vault import x from my_frames')
+
+
+@mark.parametrize('secure', ['--secure False', '-e KEY'])
+def test_exists_after_storage(tmpdir, mock_key, secure):
+    ipython.magic(f'open_vault --path {tmpdir}/archive.zip {secure}')
+    x = EXAMPLE_DATA_FRAME
+
+    vault = Vault(parse_arguments(f'--path {tmpdir}/archive.zip {secure}', VaultMagics.defaults))
+    assert 'my_frames/x' not in vault.archive
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in my_frames')
+    assert 'my_frames/x' in vault.archive
+

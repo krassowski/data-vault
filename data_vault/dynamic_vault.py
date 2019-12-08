@@ -17,6 +17,7 @@ class DynamicVault:
     def __getattr__(self, key):
         if key in self.__dir__():
             importer = self.importers.get(key, None)
+            # TODO: display metadata
             return self.vault.load_object(self.path + '/' + key, key, importer, to_globals=False)
         raise AttributeError
 
