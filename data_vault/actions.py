@@ -5,10 +5,8 @@ from .dynamic_vault import DynamicVault
 
 params = ParametresValidator()
 
-# TODO: autogenerate syntax in documentation
 
 class StoreAction(Action):
-
     main_keyword = 'store'
     verb = 'stored'
 

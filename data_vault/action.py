@@ -48,6 +48,13 @@ class Syntax:
             'misses': misses
         }
 
+    def diff(self, arguments):
+        return ', '.join([
+            f"'{keyword}': {explanation}"
+            for keyword, explanation in
+            self.calc_concordance(arguments, 'required', raise_exceptions=False)['misses'].items()
+        ])
+
     def validate(self, arguments):
         assert self.calc_concordance(arguments, 'required', raise_exceptions=True)['ratio'] == 1
         # if it does not raise, it's ok
@@ -79,6 +86,11 @@ class Action(ABC):
     def __init__(self, vault: Vault):
         self.vault: Vault = vault
 
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+
+        cls.__doc__ = (cls.__doc__ or '') + cls.explain()
+
     @abstractproperty
     def handlers(self) -> Dict[Callable, Syntax]:
         """Should be ordered from the most specific to the most general."""
@@ -100,26 +112,30 @@ class Action(ABC):
 
         return None
 
-    def closest_syntax(self, arguments):
+    def closest_syntax(self, arguments, n=3):
         counter = Counter({
             syntax: syntax.calc_concordance(arguments, 'required', raise_exceptions=False)['ratio']
             for handler, syntax in self.handlers.items()
         })
-        return counter.most_common(3)
+        return counter.most_common(n)
+
+    def syntax_help(self, n=None, arguments=None):
+        arguments = arguments or {}
+        closest = [
+            str(syntax) + (
+                '\n\t\t> ' + syntax.diff(arguments)
+                if arguments else
+                ''
+            )
+            for syntax, concordance in self.closest_syntax(arguments, n=n)
+        ]
+        return '\n\t - '.join(map(str, [''] + closest))
 
     def perform(self, arguments) -> Metadata:
         # choose handler using syntax concordance with the required arguments
         handler = self.choose_handler(arguments)
         if not handler:
-            error = 'No command matched. Did you mean:'
-            closest = [
-                str(syntax) + '\n\t\t> ' + ', '.join([
-                    f"'{keyword}': {explanation}"
-                    for keyword, explanation in syntax.calc_concordance(arguments, 'required', raise_exceptions=False)['misses'].items()
-                ])
-                for syntax, concordance in self.closest_syntax(arguments)
-            ]
-            error += '\n\t - '.join(map(str, [''] + closest))
+            error = 'No command matched. Did you mean:' + self.syntax_help(n=3, arguments=arguments)
             raise ValueError(error)
 
         # validate the optional and disallowed parts of the syntax
@@ -164,3 +180,8 @@ class Action(ABC):
             func_name = arguments['with']
             return self.ipython_globals[func_name]
         return None
+
+    @classmethod
+    def explain(cls):
+        instance = cls(None)
+        return f'# {instance.main_keyword}' + instance.syntax_help()
