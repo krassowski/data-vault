@@ -205,7 +205,7 @@ class StorageMagics(Magics):
 
         metadata['started'] = started.isoformat()
         metadata['finished'] = finished.isoformat()
-        metadata['finished_human_readable'] = finished.strftime('%A, %d. %B %Y %I:%M%p')
+        metadata['finished_human_readable'] = finished.strftime('%A, %d. %b %Y %H:%M')
         metadata['command'] = line
     
         display(

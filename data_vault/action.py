@@ -1,6 +1,6 @@
 Metadata = dict
-from typing import List, Dict, Callable
-from abc import ABC, abstractproperty, abstractmethod
+from typing import Dict, Callable
+from abc import ABC, abstractproperty
 from .frames import frame_manager
 from collections import Counter
 
@@ -126,7 +126,7 @@ class Action(ABC):
         }
 
     def short_stamp(self, metadata: Metadata) -> str:
-        """Return short, human redable description of the action"""
+        """Return short, human readable description of the action"""
         
         def repr_result(result, hash_method='crc32'):
             hashcodes = [
