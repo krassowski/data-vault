@@ -156,3 +156,19 @@ def test_exists_after_storage(tmpdir, mock_key, secure):
         ipython.magic('vault store x in my_frames')
     assert 'my_frames/x' in vault.archive
 
+
+@mark.parametrize('secure', ['--secure False', '-e KEY'])
+def test_assert(tmpdir, mock_key, secure):
+    ipython.magic(f'open_vault --path {tmpdir}/archive.zip {secure}')
+    x = EXAMPLE_DATA_FRAME
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in my_frames')
+
+        with raises(ValueError, match=r'Hash needs to have either 8 \(CRC32\) or 64 \(SHA256\) characters'):
+            ipython.magic('vault assert x in my_frames is JH54')
+
+        with raises(AssertionError):
+            ipython.magic('vault assert x in my_frames is JH56321T')
+
+        ipython.magic('vault assert x in my_frames is 3FDAA797')

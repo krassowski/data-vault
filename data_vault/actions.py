@@ -190,15 +190,30 @@ class DeleteAction(Action):
 
 
 class AssertAction(Action):
-    """Verify the checksum of the input file, raise AssertionError if it differs"""
+    """Verify the checksum of the input file, raise AssertionError if it differs.
+
+    By default the checksum is calculated with CRC32."""
     main_keyword = 'assert'
     verb = 'verified'
 
     def assert_variable_hash(self, arguments):
-        raise NotImplemented
+        path = arguments['in'] + '/' + arguments['assert']
+        return self._assert_hash(path=path, arguments=arguments)
 
     def assert_path_hash(self, arguments):
-        raise NotImplemented
+        return self._assert_hash(path=arguments['assert'], arguments=arguments)
+
+    def _assert_hash(self, path, arguments):
+        expected = arguments['is']
+        method = arguments.get('with', 'CRC32')
+        calculated = self.vault.archive.calc_checksum(path, method=method)
+        assert expected == calculated
+        return [{
+            'subject': path,
+            'old_file': {
+                'crc32': calculated
+            }
+        }]
 
     handlers = {
         assert_variable_hash: Syntax(

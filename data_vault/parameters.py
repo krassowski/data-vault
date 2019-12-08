@@ -60,5 +60,8 @@ class ParametresValidator:
         return True
         
     def hash(self, param: str):
-        assert len(hash) == 8 or len(hash) == 32
-        return True
+        """Hash from CRC32 or SHA256"""
+        if len(param) == 8 or len(param) == 64:
+            return True
+        else:
+            raise ValueError('Hash needs to have either 8 (CRC32) or 64 (SHA256) characters')
