@@ -4,9 +4,11 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/krassowski/data-vault/master?filepath=Example.ipynb)
 
-IPython magic for simple, organized, compressed and encrypted storage &amp; transfer of files between notebooks.
+IPython magic for simple, organized, compressed and encrypted storage & transfer of files between notebooks.
 
-###  Right tool for a simple job
+## Background and demo
+
+### Right tool for a simple job
 
 The `%vault` magic provides a reproducible caching mechanism for variables exchange between notebooks.
 The cache is compressed, persistent and safe.
@@ -73,7 +75,7 @@ If we already have the salaries variable, we can use `as`, just like in the Pyth
 Syntax:
 - easy to understand in plain language (avoid abbreviations when possible),
 - while intuitive for Python developers,
-- ... but sufficiently different so that it would not be mistaken with Python constructs
+- ...but sufficiently different so that it would not be mistaken with Python constructs
    - for example, we could have `%from x import y`, but this looks very like normal Python;
      having `%vault from x import y` makes it sufficiently easy to distinguish
 - star imports are better avoided, thus not supported
@@ -88,10 +90,11 @@ Reproducibility:
 - allow to trace instances of the code being modified post execution
 
 Security:
-- think of it as a tool to minimize the damage in case of accidental `git add` of data files (even if those should have been elsewhere and `.gitignore`d in the first place),
-- or, as an additional layer of security for already anonimized data,
-- but this tool is **not** aimed at facilitating the storage of highly sensitive data
-- you have to set a password, or explicitly set `--secure False` to get rid of a security warning
+
+* think of it as a tool to minimize the damage in case of accidental `git add` of data files (even if those should have been elsewhere and `.gitignore`d in the first place),
+* or, as an additional layer of security for already anonymized data,
+* but this tool is **not** aimed at facilitating the storage of highly sensitive data
+* you have to set a password, or explicitly set `--secure False` to get rid of a security warning
 
 ## Features overview
 
