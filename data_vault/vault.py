@@ -18,7 +18,8 @@ class Vault:
         return self.archive.list_members(relative_to=relative_to)
 
     def _default_exporter(self, file_object, variable):
-        return variable.to_csv(file_object, sep='\t')
+        # line terminator set to '\n' to have the same hashes between Unix and Windows
+        return variable.to_csv(file_object, sep='\t', line_terminator='\n')
 
     @property
     def archive(self):
