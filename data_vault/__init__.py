@@ -1,33 +1,13 @@
-from tempfile import NamedTemporaryFile
-import os
 from warnings import warn
-from contextlib import contextmanager
-from zipfile import ZipFile
 from datetime import datetime
+
 from IPython.display import display
 from IPython import get_ipython
 from IPython.core.magic import Magics, magics_class, line_magic
-from pandas import read_csv
 
-from .seven_zip import SevenZip
-from .memory import optimize_memory
 from .actions import StoreAction, ImportAction, DeleteAction, AssertAction
 from .parsing import parse_arguments, clean_line
-from .frames import frame_manager
-
-
-@contextmanager
-def file_from_storage(archive_path, file_path, pwd: str=None, mode='r'):
-
-    if pwd:
-        pwd = pwd.encode()
-
-    with ZipFile(archive_path) as archive:
-        yield archive.open(
-            file_path,
-            mode=mode,
-            pwd=pwd
-        )
+from .vault import Vault
 
 
 def one(values):
@@ -156,6 +136,7 @@ class StorageMagics(Magics):
             'allowed_duration': 30,  # seconds
         }
         self.settings = None
+        self.current_vault = None
 
     actions = [
         StoreAction,
@@ -167,6 +148,7 @@ class StorageMagics(Magics):
     @line_magic
     def open_vault(self, line):
         self.settings = parse_arguments(line, self.defaults)
+        self.current_vault = Vault(self.settings)
         if self.settings['secure'] and not self.settings['encryption_variable']:
             warn(
                 'Encryption variable not set - no encryption will be used.'
@@ -182,6 +164,8 @@ class StorageMagics(Magics):
 
     @line_magic
     def vault(self, line):
+        self._ensure_configured()
+
         iterable = iter(clean_line(line))
         arguments = {key: next(iterable) for key in iterable}
 
@@ -196,7 +180,7 @@ class StorageMagics(Magics):
         started = self._timestamp()
 
         action_class = actions[requested_action]
-        action = action_class(vault=self)
+        action = action_class(vault=self.current_vault)
         metadata = action.perform(arguments)
 
         finished = self._timestamp()
@@ -222,98 +206,9 @@ class StorageMagics(Magics):
             )
         )
 
-    def _default_exporter(self, file_object, variable):
-        return variable.to_csv(file_object, sep='\t')
-
-    @property
-    def archive(self):
-        return SevenZip(
-            archive_path=self.settings['path'],
-            password=self._password
-        )
-
-    def save_object(self, path, value, exporter, **metadata):
-        self._ensure_configured()
-
-        if not exporter:
-            exporter = self._default_exporter
-
-        old_checksum_crc, old_checksum_sha = None, None
-
-        archive = self.archive
-
-        if path in archive:
-            old_checksum_crc = archive.calc_checksum(path, method='CRC32')
-            old_checksum_sha = archive.calc_checksum(path, method='SHA256')
-
-        with NamedTemporaryFile(delete=False) as f:
-
-            try:
-                f.close()
-                exporter(f.name, value)
-                archive.add_file(f.name, rename=path)
-            except Exception as e:
-                raise e
-            finally:
-                os.remove(f.name)
-
-        new_checksum_crc = archive.calc_checksum(path, method='CRC32')
-        new_checksum_sha = archive.calc_checksum(path, method='SHA256')
-        archive.check_integrity()
-
-        return {
-            'new_file': {
-                'crc32': new_checksum_crc,
-                'sha256': new_checksum_sha
-            },
-            'old_file': {
-                'crc32': old_checksum_crc,
-                'sha256': old_checksum_sha
-            },
-            **metadata
-        }
-
-    @property
-    def _password(self):
-        key_name = self.settings['encryption_variable']
-
-        return (
-            os.environ[key_name]
-            if key_name else
-            False
-        )
-
     @staticmethod
     def _timestamp():
         return datetime.utcnow()
-
-    def _default_importer(self, file_object):
-        df = read_csv(file_object, sep='\t', index_col=0, parse_dates=True)
-        if self.settings['optimize_df']:
-            df = optimize_memory(df)
-        return df
-
-    def load_object(self, path, variable_name, importer=None):
-        self._ensure_configured()
-        if not importer:
-            importer = self._default_importer
-
-        with file_from_storage(self.settings['path'], path, self._password) as f:
-            obj = importer(f)
-            frame_manager.get_ipython_globals()[variable_name] = obj
-
-        archive = self.archive
-        new_checksum_crc = archive.calc_checksum(path, method='CRC32')
-        new_checksum_sha = archive.calc_checksum(path, method='SHA256')
-        archive.check_integrity()
-
-        return {
-            'new_file': {
-                'crc32': new_checksum_crc,
-                'sha256': new_checksum_sha
-            },
-            'subject': variable_name
-        }
 
 
 ip = get_ipython()

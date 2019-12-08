@@ -1,8 +1,12 @@
-Metadata = dict
-from typing import Dict, Callable
+from typing import Dict, Callable, List, Union
 from abc import ABC, abstractproperty
-from .frames import frame_manager
 from collections import Counter
+
+from .vault import Vault
+from .frames import frame_manager
+
+
+Metadata = Dict[str, Union[str, List[Dict]]]
 
 
 class Syntax:
@@ -72,8 +76,8 @@ class Syntax:
 
 class Action(ABC):
 
-    def __init__(self, vault):
-        self.vault = vault
+    def __init__(self, vault: Vault):
+        self.vault: Vault = vault
 
     @abstractproperty
     def handlers(self) -> Dict[Callable, Syntax]:
@@ -82,7 +86,11 @@ class Action(ABC):
     @abstractproperty
     def verb(self) -> str:
         """Past form of a verb describing the finished action."""
-    
+
+    @abstractproperty
+    def main_keyword(self) -> str:
+        """The main keyword which defines the kind of action"""
+
     def choose_handler(self, arguments):
         for handler, syntax in self.handlers.items():
             concordance = syntax.calc_concordance(arguments, 'required', raise_exceptions=False)['ratio']

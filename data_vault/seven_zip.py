@@ -1,5 +1,21 @@
 import subprocess
+from contextlib import contextmanager
 from pathlib import Path
+from zipfile import ZipFile
+
+
+@contextmanager
+def file_from_storage(archive_path, file_path, pwd: str = None, mode='r'):
+
+    if pwd:
+        pwd = pwd.encode()
+
+    with ZipFile(archive_path) as archive:
+        yield archive.open(
+            file_path,
+            mode=mode,
+            pwd=pwd
+        )
 
 
 class SevenZip:
@@ -20,11 +36,18 @@ class SevenZip:
     def rename(self, old_path: str, new_path: str):
         return self._execute('rn', old_path, new_path)
 
+    def exists(self):
+        return Path(self.path).exists()
+
     def __contains__(self, file_path: str):
+        if not self.exists():
+            return False
         try:
             self._execute('t', file_path)
             return False
-        except subprocess.CalledProcessError:
+        except subprocess.CalledProcessError as e:
+            #print(e)
+            #raise e
             return True
 
     def _password_arg(self, password: str):
@@ -58,7 +81,8 @@ class SevenZip:
         args = ['-y', file_path] + self._password_arg(password)
         return self._execute('a', *args)
 
-    def add_file(self, file_path: str, password=None, rename=False):
+    def add_file(self, file_path: str, password=None, rename: str = False):
+        assert rename is not True
         if not rename:
             self._add_file(file_path, password=password)
         else:
@@ -75,3 +99,7 @@ class SevenZip:
 
     def delete(self, file_to_remove: str):
         return self._execute('d', file_to_remove)
+
+    def list_members(self, relative_to=None):
+        with ZipFile(self.path) as archive:
+            return archive.namelist()

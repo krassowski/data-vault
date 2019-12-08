@@ -117,7 +117,7 @@ class ImportAction(Action):
         if 'as' not in arguments:
             path = parent
 
-        dynamic_vault = DynamicVault(path=path, importer=importer)
+        dynamic_vault = DynamicVault(path=path, vault=self.vault)
         self.ipython_globals[name] = dynamic_vault
 
         return []
@@ -188,20 +188,7 @@ class DeleteAction(Action):
         # TODO: what to do about wildcards?
         assert '*' not in path
 
-        archive = self.vault.archive
-
-        old_checksum_crc = archive.calc_checksum(path, method='CRC32')
-        old_checksum_sha = archive.calc_checksum(path, method='SHA256')
-
-        archive.delete(path)
-
-        return [{
-            'old_file': {
-                'crc32': old_checksum_crc,
-                'sha256': old_checksum_sha
-            },
-            'subject': path
-        }]
+        return self.vault.remove_object(path)
 
 
 class AssertAction(Action):
