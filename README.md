@@ -155,6 +155,18 @@ files in the storage area are assumed to be of encrypted, increasing the securit
 As the limitations of the ZIP encryption are assumed to be a common knowledge, I hope that managing expectations
 of the level of security offered by this package will be easier.
 
+## Installation and requirements
+
+Pre-requirements:
+- Python 3.6+
+- 7zip
+
+Installation:
+
+```bash
+pip3 install data_vault
+```
+
 ## Draft ideas for future
 
 **not implemented, up for discussion**
