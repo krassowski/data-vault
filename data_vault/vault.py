@@ -83,26 +83,32 @@ class Vault:
             df = optimize_memory(df)
         return df
 
-    def load_object(self, path, variable_name, importer=None):
+    def load_object(self, path, variable_name, importer=None, to_globals=True):
         if not importer:
             importer = self._default_importer
 
         with file_from_storage(self.settings['path'], path, self._password) as f:
             obj = importer(f)
-            frame_manager.get_ipython_globals()[variable_name] = obj
+            if to_globals:
+                frame_manager.get_ipython_globals()[variable_name] = obj
 
         archive = self.archive
         new_checksum_crc = archive.calc_checksum(path, method='CRC32')
         new_checksum_sha = archive.calc_checksum(path, method='SHA256')
         archive.check_integrity()
 
-        return {
+        metadata = {
             'new_file': {
                 'crc32': new_checksum_crc,
                 'sha256': new_checksum_sha
             },
             'subject': variable_name
         }
+
+        if to_globals:
+            return metadata
+        else:
+            return obj
 
     def remove_object(self, path):
 
