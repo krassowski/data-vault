@@ -4,20 +4,6 @@ from pathlib import Path
 from zipfile import ZipFile
 
 
-@contextmanager
-def file_from_storage(archive_path, file_path, pwd: str = None, mode='r'):
-
-    if pwd:
-        pwd = pwd.encode()
-
-    with ZipFile(archive_path) as archive:
-        yield archive.open(
-            file_path,
-            mode=mode,
-            pwd=pwd
-        )
-
-
 class SevenZip:
 
     command = '7z'
@@ -25,6 +11,16 @@ class SevenZip:
     def __init__(self, archive_path: str, password=None):
         self.path = archive_path
         self.password = password
+
+    @contextmanager
+    def open(self, file_path, mode='r', password: str = None):
+        password = password or self.password
+
+        if password:
+            password = password.encode()
+
+        with ZipFile(self.path) as archive:
+            yield archive.open(file_path, mode=mode, pwd=password)
 
     def _execute(self, command, *args):
         o = subprocess.check_output(

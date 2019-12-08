@@ -4,7 +4,7 @@ from typing import Dict
 
 from pandas import read_csv
 
-from .seven_zip import SevenZip, file_from_storage
+from .seven_zip import SevenZip
 from .memory import optimize_memory
 from .frames import frame_manager
 
@@ -88,12 +88,13 @@ class Vault:
         if not importer:
             importer = self._default_importer
 
-        with file_from_storage(self.settings['path'], path, self._password) as f:
+        archive = self.archive
+
+        with archive.open(path) as f:
             obj = importer(f)
             if to_globals:
                 frame_manager.get_ipython_globals()[variable_name] = obj
 
-        archive = self.archive
         new_checksum_crc = archive.calc_checksum(path, method='CRC32')
         new_checksum_sha = archive.calc_checksum(path, method='SHA256')
         archive.check_integrity()

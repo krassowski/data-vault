@@ -1,3 +1,5 @@
+import gzip
+import json
 from typing import List
 from warnings import warn
 from datetime import datetime
@@ -31,13 +33,15 @@ class VaultMagics(Magics):
         'optimize_df': True,
         'timestamp': True,
         'metadata': True,
+        'logs_path': '{path}.vault.log.gz',
+        'gzip_logs': True
         # 'allowed_duration': 30,  # seconds
     }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.settings = None
-        self.current_vault = None
+        self.current_vault: Vault = None
 
     actions: List[Action] = [
         StoreAction,
@@ -68,6 +72,12 @@ class VaultMagics(Magics):
     def _ensure_configured(self):
         if not self.settings:
             raise Exception('Please setup the storage with %open_vault first.')
+
+    def append_to_logs(self, metadata):
+        logs_path = self.settings['logs_path'].format(**self.settings)
+        opener = (gzip.open if self.settings['gzip_logs'] else open)
+        with opener(logs_path, mode='ta+') as f:
+            f.write(json.dumps(metadata) + '\n')
 
     @line_magic
     def vault(self, line):
@@ -100,7 +110,9 @@ class VaultMagics(Magics):
         metadata['finished'] = finished.isoformat()
         metadata['finished_human_readable'] = finished.strftime('%A, %d. %b %Y %H:%M')
         metadata['command'] = line
-    
+
+        self.append_to_logs(metadata)
+
         display(
             (
                 action.short_stamp(metadata)

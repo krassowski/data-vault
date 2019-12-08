@@ -1,5 +1,5 @@
 from data_vault import clean_line
-from data_vault.parsing import unquote
+from data_vault.parsing import unquote, bool_or_str
 
 
 def test_clean_line():
@@ -25,3 +25,10 @@ def test_clean_line():
 def test_unquote():
     assert unquote("'an/escaped\'path/'") == 'an/escaped\'path/'
     assert unquote('"an/escaped\"path/"') == 'an/escaped\"path/'
+
+
+def test_bool_or_str():
+    assert bool_or_str('a') == 'a'
+    assert bool_or_str('True') is True
+    assert bool_or_str('False') is False
+    assert bool_or_str('true') == 'true'

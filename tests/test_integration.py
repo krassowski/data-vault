@@ -1,4 +1,6 @@
+from contextlib import contextmanager
 from unittest.mock import patch
+from zipfile import ZipFile
 
 from pandas import DataFrame, read_csv
 from pandas.util.testing import assert_frame_equal
@@ -6,8 +8,21 @@ from pytest import raises, fixture, warns, mark
 from IPython import get_ipython
 
 from data_vault import Vault, parse_arguments, VaultMagics
-from data_vault.seven_zip import file_from_storage
 from data_vault.frames import frame_manager
+
+
+@contextmanager
+def file_from_storage(archive_path, file_path, pwd: str = None, mode='r'):
+
+    if pwd:
+        pwd = pwd.encode()
+
+    with ZipFile(archive_path) as archive:
+        yield archive.open(
+            file_path,
+            mode=mode,
+            pwd=pwd
+        )
 
 
 ipython = get_ipython()
