@@ -172,3 +172,20 @@ def test_assert(tmpdir, mock_key, secure):
             ipython.magic('vault assert x in my_frames is JH56321T')
 
         ipython.magic('vault assert x in my_frames is 3FDAA797')
+
+
+@mark.parametrize('secure', ['--secure False', '-e KEY'])
+def test_import_module(tmpdir, mock_key, secure):
+    ipython.magic(f'open_vault --path {tmpdir}/archive.zip {secure}')
+    x = EXAMPLE_DATA_FRAME
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in my_frames')
+        ipython.magic('vault store x in my_frames as y')
+
+    with patch_ipython_globals(globals()):
+        ipython.magic('vault import my_frames')
+        assert set(dir(my_frames)) == {'x', 'y'}
+
+        assert_frame_equal(my_frames.x, x, check_dtype=False)
+        assert_frame_equal(my_frames.y, y, check_dtype=False)
