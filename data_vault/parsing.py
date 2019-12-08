@@ -7,13 +7,17 @@ def bool_or_str(value: str):
 
 
 def clean_line(line: str) -> str:
+    """Split/tokenize a line with keywords and parameters.
+
+    TODO: rewrite using grammar or lexer?
+    """
     pieces = ['']
-    string = ''
+    quote = ''
     prev = ''
     for c in line.strip():
-        if string:
-            if prev != '\\' and c == string:
-                string = ''
+        if quote:
+            if prev != '\\' and c == quote:
+                quote = ''
                 pieces[-1] += c
                 pieces.append('')
             else:
@@ -22,7 +26,7 @@ def clean_line(line: str) -> str:
             if c == '"' or c == "'":
                 assert pieces[-1] == ''
                 pieces[-1] += c
-                string = c
+                quote = c
             elif c.isspace():
                 if pieces[-1] != '' and pieces[-1][-1] != ',':
                     pieces.append('')
@@ -30,6 +34,7 @@ def clean_line(line: str) -> str:
                 break
             else:
                 pieces[-1] += c
+        prev = c
 
     if pieces[-1] == '':
         pieces = pieces[:-1]
