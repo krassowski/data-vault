@@ -30,7 +30,6 @@ class SevenZip:
         o = subprocess.check_output(
             [self.command, command, self.path, *args]
         )
-        assert b'Everything is Ok' in o
         return o.decode('utf-8')
 
     def rename(self, old_path: str, new_path: str):
