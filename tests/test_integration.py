@@ -1,12 +1,12 @@
 from unittest.mock import patch
 
-from _pytest.recwarn import warns
 from pandas import DataFrame, read_csv
-from pytest import raises, fixture
+from pandas.util.testing import assert_frame_equal
+from pytest import raises, fixture, warns, mark
 from IPython import get_ipython
 
-from .seven_zip import file_from_storage
-from .frames import frame_manager
+from data_vault.seven_zip import file_from_storage
+from data_vault.frames import frame_manager
 
 
 ipython = get_ipython()
@@ -108,5 +108,37 @@ def test_store_with_exporter(tmpdir):
         assert x.equals(data)
 
 
-def test_comments_in_magics():
-    pass
+def test_comments_in_magics(tmpdir):
+    with warns(UserWarning, match='Encryption variable not set - no encryption will be used..*'):
+        ipython.magic(f'open_vault --path {tmpdir}/archive.zip # --secure False')
+
+
+@mark.parametrize('secure', ['--secure False', '-e KEY'])
+def test_import_as(tmpdir, mock_key, secure):
+    ipython.magic(f'open_vault --path {tmpdir}/archive.zip {secure}')
+    x = EXAMPLE_DATA_FRAME
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in my_frames')
+
+    with patch_ipython_globals(globals()):
+        ipython.magic('vault import x from my_frames as y')
+
+    # dtype should be optimized
+    assert_frame_equal(x, y, check_dtype=False)
+
+    with raises(AssertionError, match='.*Attribute "dtype" are different.*'):
+        assert_frame_equal(x, y)
+
+
+@mark.parametrize('secure', ['--secure False', '-e KEY'])
+def test_del(tmpdir, mock_key, secure):
+    ipython.magic(f'open_vault --path {tmpdir}/archive.zip {secure}')
+    x = EXAMPLE_DATA_FRAME
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in my_frames')
+        ipython.magic('vault del x from my_frames')
+
+    with raises(KeyError, match="There is no item named 'my_frames/x' in the archive"):
+        ipython.magic('vault import x from my_frames')
