@@ -71,10 +71,12 @@ def test_store_with_exporter(tmpdir):
         data = read_csv(f, csv='|')
         assert x.equals(data)
 
+
 def test_open_vault_message(tmpdir):
     with raises(Exception) as error_info:
         ipython.magic('vault del x')
-        assert error_info.match('Please setup the storage with %open_valut first')
-        
+        assert error_info.match('Please setup the storage with %open_vault first')
+
+
 def test_comments_in_magics():
     pass

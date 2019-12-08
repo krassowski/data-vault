@@ -3,6 +3,7 @@ from .parsing import split_variables, unquote
 
 # TODO, rewrite this part, the return True everywhere is bad... or differentiate between validators and probes? or always return, or always rise.
 
+
 class ParametresValidator:
 
     # TODO rename module to folder (or other way of locating something in the vault)?

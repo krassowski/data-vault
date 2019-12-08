@@ -52,11 +52,11 @@ class StorageMagics(Magics):
     - easy to understand in plain language (avoid abbreviations when possible),
     - while intuitive for Python developers,
     - ... but sufficiently different so that it would not be mistaken with Python constructs
-       - for example, we could have %from x import y, but this looks very like normaly Python;
+       - for example, we could have %from x import y, but this looks very like normal Python;
          having %vault from x import y makes it sufficiently easy to distinguish
 
-    Reproduciblity:
-    - promote good reproducible and tracable organization of files:
+    Reproducibility:
+    - promote good reproducible and traceable organization of files:
        - promote storage in plain text files and the use of DataFrame
           - pickling is initially fun, but really try to change your class definitions and load your data again.
        - print out a short hashsum and human-readable datetime (always in UTC),
@@ -79,7 +79,7 @@ class StorageMagics(Magics):
     and a full timestamp (to detect potential race condition errors in file write operations) are
     embedded in the metadata of the cell. You can disable this by setting --metadata False.
     
-    The exact command line is also stored in the metadata, so that if you accidentaly modify the code cell
+    The exact command line is also stored in the metadata, so that if you accidentally modify the code cell
     without re-running the code, the change can be tracked down.
 
     ### Storage
@@ -95,7 +95,7 @@ class StorageMagics(Magics):
     **The encryption is not intended as a high security mechanism,
     but only as an additional layer of protection for already anonymized data.**
     
-    The password to encrypt the storage archive is retrived from the environmental variable,
+    The password to encrypt the storage archive is retrieved from the environmental variable,
     using a name provided in `encryption_variable` during the setup.
     
     > %open_vault -e ENV_STORAGE_KEY
@@ -134,13 +134,13 @@ class StorageMagics(Magics):
       - a metadata files
 
     I believe that HDF may be the future, but this future is not here yet - numerous issues with the packages handling
-    the HDF files, as well as low performence and compression rate prompted me to stay with a simple zip format now.
+    the HDF files, as well as low performance and compression rate prompted me to stay with a simple zip format now.
     
     ZIP is a popular file format with known features and limitations - files can be password encrypted, while the file
     list is always accessible. This is okay given that the code of the project is assumed to be public, and only the
     files in the storage area are assumed to be of encrypted, increasing the security in case of unauthorized access.
     
-    As the limitations of the ZIP encryption are assumed to be a common knowledge, I hope that managing excpectations
+    As the limitations of the ZIP encryption are assumed to be a common knowledge, I hope that managing expectations
     of the level of security offered by this package will be easier.
     """
 
@@ -170,7 +170,8 @@ class StorageMagics(Magics):
         if self.settings['secure'] and not self.settings['encryption_variable']:
             warn(
                 'Encryption variable not set - no encryption will be used.'
-                ' Your data may be susceptible, and you may not be able to access stored objects if those were previously encrypted.'
+                ' Your data may be susceptible,'
+                ' and you may not be able to access stored objects if those were previously encrypted.'
                 ' Please provide the name of the environment variable with the storage key using `-e env_var_name`, or'
                 ' set `--secure False` to silence this warning if you do not need additional protection.'
             )
@@ -313,6 +314,7 @@ class StorageMagics(Magics):
             },
             'subject': variable_name
         }
+
 
 ip = get_ipython()
 ip.register_magics(StorageMagics)

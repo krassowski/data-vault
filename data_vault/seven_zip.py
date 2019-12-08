@@ -28,7 +28,7 @@ class SevenZip:
             return True
 
     def _password_arg(self, password: str):
-        """Set password argument for given argumnet:
+        """Set password argument for given argument:
         - the password set at initialization if `password` is None,
         - given `password` if not None,
         - empty if `password` is `False`
