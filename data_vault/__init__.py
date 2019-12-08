@@ -4,7 +4,7 @@ from typing import List
 from warnings import warn
 from datetime import datetime
 
-from IPython.display import display
+from IPython.display import display, Markdown, Code
 from IPython import get_ipython
 from IPython.core.magic import Magics, magics_class, line_magic
 
@@ -113,7 +113,7 @@ class VaultMagics(Magics):
 
         self.append_to_logs(metadata)
 
-        display(
+        display(Markdown(
             (
                 action.short_stamp(metadata)
                 if self.settings['timestamp'] else
@@ -124,7 +124,7 @@ class VaultMagics(Magics):
                 if self.settings['metadata'] else
                 None
             )
-        )
+        ))
 
     vault.__doc__ += '\n\nVault commands:\n\n' + '\n'.join(
         [action.explain() for action in actions]

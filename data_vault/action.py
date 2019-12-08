@@ -154,20 +154,23 @@ class Action(ABC):
         
         def repr_result(result, hash_method='crc32'):
             hashcodes = [
-                str(result[file][hash_method])
+                f'{result[file][hash_method]}'
                 for file in ['old_file', 'new_file']
                 if file in result
             ]
-            return result['subject'] + ' (' + ' → '.join(hashcodes) + ')'
-        
+            return f"`{result['subject']}`" + ' (' + ' → '.join(hashcodes) + ')'
+
+        results_n = len(metadata['result'])
+
         return (
             self.verb.capitalize()
-            + ' '
-            + '\n'.join([
+            + (':\n\n - ' if results_n > 1 else ' ')
+            + '\n - '.join([
                 repr_result(result)
                 for result in metadata['result']
             ])
-            + ' at '
+            + ('\n\n' if results_n > 1 else ' ')
+            + 'at '
             + metadata['finished_human_readable']
         )
 
