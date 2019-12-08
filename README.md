@@ -1,4 +1,4 @@
-# data-vault
+# IPython data-vault
 [![Build Status](https://travis-ci.org/krassowski/data-vault.svg?branch=master)](https://travis-ci.org/krassowski/data-vault)
 [![codecov](https://codecov.io/gh/krassowski/data-vault/branch/master/graph/badge.svg)](https://codecov.io/gh/krassowski/data-vault)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
