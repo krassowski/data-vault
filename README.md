@@ -70,7 +70,7 @@ If we already have the salaries variable, we can use `as`, just like in the Pyth
 %vault import salaries from datasets as salaries_dataset
 ```
 
-### Store or import with a custom function
+#### Store or import with a custom function
 
 ```python
 from pandas import read_csv
@@ -79,7 +79,7 @@ to_csv = lambda df: df.to_csv()
 %vault import salaries_csv from datasets with read_csv
 ```
 
-### Import an arbitrary file
+#### Import an arbitrary file
 
 ```python
 from pandas import read_excel
