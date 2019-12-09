@@ -46,12 +46,12 @@ And store it in the vault:
 
 > Stored salaries (None → 40CA7812) at Sunday, 08. Dec 2019 11:58
 
-A short description including a short CRC32 hashsum and timestamp is printed out by default and can be disabled by passing `--timestamp False` to `%open_vault` magic.
-More variables supporting the reproducibility of analyses are stored in the cell metadata - see [Metadata for storage operations](#metadata-for-storage-operations).
+A short description is printed out (including a CRC32 hashsum and a timestamp) by default, but can be disabled by passing `--timestamp False` to `%open_vault` magic.
+Even more information enhancing the reproducibility is [stored in the cell metadata](#metadata-for-storage-operations).
 
 #### Import variable from a module
 
-We can now load it in a different (or the same) notebook:
+We can now load the stored DataFrame in another (or the same) notebook:
 
 ```python
 %vault import salaries from datasets
@@ -61,13 +61,29 @@ We can now load it in a different (or the same) notebook:
 
 > Imported salaries (40CA7812) at Sunday, 08. Dec 2019 12:02
 
-Thanks to [memory optimizations](memory-optimizations) (which can be disabled) we saved on some RAM as compared to the plain pandas requirements.
+Thanks to (optional) [memory optimizations](memory-optimizations) we saved some RAM (87% as compared to unoptimized `pd.read_csv()` result).
 
 #### Import variable as something else
 
 If we already have the salaries variable, we can use `as`, just like in the Python import system.
 ```python
 %vault import salaries from datasets as salaries_dataset
+```
+
+### Store or import with a custom function
+
+```python
+from pandas import read_csv
+to_csv = lambda df: df.to_csv()
+%vault store salaries in datasets with to_csv as salaries_csv
+%vault import salaries_csv from datasets with read_csv
+```
+
+### Import an arbitrary file
+
+```python
+from pandas import read_excel
+%vault import 'cars.xlsx' as cars_dataset with read_excel
 ```
 
 ### Goals
