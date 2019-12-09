@@ -4,7 +4,7 @@ import numpy as np
 
 def mb(x):
     """Represent as MB"""
-    return x/10**6
+    return x / 10**6
 
 
 def optimize_memory(
@@ -22,7 +22,7 @@ def optimize_memory(
     for column in df.columns:
         s = df[column]
 
-        if s.dtype.name != 'category' and np.issubdtype(s.dtype, np.number):
+        if s.dtype.name != 'category' and np.issubdtype(s.dtype, np.integer):
             if s.min() >= -125 and s.max() < 125 and not s.isnull().any():
                 df[column] = s.astype('int8')
         else:
