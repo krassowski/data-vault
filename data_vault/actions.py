@@ -78,7 +78,6 @@ class ImportAction(Action):
 
     def from_module_import_as(self, arguments):
         path = arguments['from']
-        importer = self.with_function(arguments)
         variable = arguments['import']
         name = arguments.get('as', variable)
         
