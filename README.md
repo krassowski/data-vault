@@ -61,7 +61,7 @@ We can now load the stored DataFrame in another (or the same) notebook:
 
 > Imported salaries (40CA7812) at Sunday, 08. Dec 2019 12:02
 
-Thanks to (optional) [memory optimizations](memory-optimizations) we saved some RAM (87% as compared to unoptimized `pd.read_csv()` result).
+Thanks to (optional) [memory optimizations](#memory-optimizations) we saved some RAM (87% as compared to unoptimized `pd.read_csv()` result).
 
 #### Import variable as something else
 
