@@ -109,6 +109,28 @@ def test_store_with_encryption(tmpdir, mock_key):
             data = read_csv(f, sep='\t', index_col=0)
 
 
+def test_store_import_del_using_path(tmpdir, mock_key):
+    ipython.magic(f'open_vault --path {tmpdir}/archive.zip --secure False')
+    x = EXAMPLE_DATA_FRAME
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in "my_frames/custom_path.tsv"')
+
+    with file_from_storage(f'{tmpdir}/archive.zip', 'my_frames/custom_path.tsv') as f:
+        data = read_csv(f, sep='\t', index_col=0)
+        assert x.equals(data)
+
+    with patch_ipython_globals(globals()):
+        ipython.magic('vault import "my_frames/custom_path.tsv" as y')
+
+    assert_frame_equal(x, y, check_dtype=False)
+
+    ipython.magic('vault del "my_frames/custom_path.tsv"')
+
+    with raises(KeyError, match="There is no item named 'my_frames/custom_path.tsv' in the archive"):
+        ipython.magic('vault import "my_frames/custom_path.tsv" as z')
+
+
 def test_store_with_exporter(tmpdir):
     ipython.magic(f'open_vault --path {tmpdir}/archive.zip --secure False')
     x = EXAMPLE_DATA_FRAME
@@ -187,6 +209,10 @@ def test_assert(tmpdir, mock_key, secure):
             ipython.magic('vault assert x in my_frames is JH56321T')
 
         ipython.magic('vault assert x in my_frames is 3FDAA797')
+        ipython.magic('vault assert x in my_frames is 3FDAA797 with CRC32')
+
+        with raises(AssertionError):
+            ipython.magic(f'vault assert x in my_frames is {"_" * 64} with SHA256')
 
 
 @mark.parametrize('secure', ['--secure False', '-e KEY'])

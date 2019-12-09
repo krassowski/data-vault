@@ -4,9 +4,11 @@ import inspect
 class FrameManager:
     """Just to make unit testing easier"""
 
+    ipython_frame_prefix = '<ipython-input-'
+
     def find_ipython_frame(self, frames):
         for frame in frames:
-            if frame.filename.startswith('<ipython-input-'):
+            if frame.filename.startswith(self.ipython_frame_prefix):
                 return frame
         return None
 
