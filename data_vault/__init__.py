@@ -35,6 +35,7 @@ class VaultMagics(Magics):
         'metadata': True,
         'logs_path': '{path}.vault.log.gz',
         'gzip_logs': True,
+        'report_memory_gain': False,
         # aggressive memory optimisation by categorising numbers
         'numbers_as_categories': False,
         'booleans_as_categories': False

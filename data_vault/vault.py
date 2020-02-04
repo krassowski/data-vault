@@ -84,7 +84,8 @@ class Vault:
             df = optimize_memory(
                 df,
                 categorise_numbers=self.settings['numbers_as_categories'],
-                categorise_booleans=self.settings['booleans_as_categories']
+                categorise_booleans=self.settings['booleans_as_categories'],
+                report=self.settings['report_memory_gain']
             )
         return df
 

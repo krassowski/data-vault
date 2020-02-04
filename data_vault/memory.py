@@ -24,21 +24,26 @@ def optimize_memory(
     for column in df.columns:
         s = df[column]
 
-        if s.dtype.name != 'category' and np.issubdtype(s.dtype, np.integer):
+        if s.dtype.name == 'category':
+            continue
+
+        if np.issubdtype(s.dtype, np.integer):
             if s.min() >= -125 and s.max() < 125 and not s.isnull().any():
                 df[column] = s.astype('int8')
-        else:
-            values = set(s)
-
-            if np.issubdtype(s.dtype, np.number) and not categorise_numbers:
                 continue
 
-            if np.issubdtype(s.dtype, np.bool) and not categorise_booleans:
-                continue
+        # attempt to categorise
+        values = set(s)
 
-            if len(values) / len(s) < categorical_threshold:
-                sorted_categories = sorted([v for v in values if not pd.isnull(v)])
-                df[column] = pd.Categorical(s, categories=sorted_categories, ordered=True)
+        if np.issubdtype(s.dtype, np.number) and not categorise_numbers:
+            continue
+
+        if np.issubdtype(s.dtype, np.bool_) and not categorise_booleans:
+            continue
+
+        if len(values) / len(s) < categorical_threshold:
+            sorted_categories = sorted([v for v in values if not pd.isnull(v)])
+            df[column] = pd.Categorical(s, categories=sorted_categories, ordered=True)
 
     after = df.memory_usage(deep=True).sum()
 
