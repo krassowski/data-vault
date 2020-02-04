@@ -10,6 +10,8 @@ def mb(x):
 def optimize_memory(
     df: pd.DataFrame,
     categorical_threshold=0.2,
+    categorise_numbers=False,
+    categorise_booleans=False,
     inplace=True,
     report=True
 ):
@@ -27,6 +29,13 @@ def optimize_memory(
                 df[column] = s.astype('int8')
         else:
             values = set(s)
+
+            if np.issubdtype(s.dtype, np.number) and not categorise_numbers:
+                continue
+
+            if np.issubdtype(s.dtype, np.bool) and not categorise_booleans:
+                continue
+
             if len(values) / len(s) < categorical_threshold:
                 sorted_categories = sorted([v for v in values if not pd.isnull(v)])
                 df[column] = pd.Categorical(s, categories=sorted_categories, ordered=True)

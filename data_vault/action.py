@@ -21,11 +21,11 @@ class Syntax:
 
         ruleset = getattr(self, target)
         misses = {}
-        
+
         for arg, validator in ruleset.items():
-            
+
             key = arg + ' <' + validator.__name__ + '>'
-            
+
             if arg not in arguments:
                 misses[key] = 'is missing'
                 continue
@@ -151,7 +151,7 @@ class Action(ABC):
 
     def short_stamp(self, metadata: Metadata) -> str:
         """Return short, human readable description of the action"""
-        
+
         def repr_result(result, hash_method='crc32'):
             hashcodes = [
                 f'{result[file][hash_method]}'

@@ -81,7 +81,11 @@ class Vault:
     def _default_importer(self, file_object):
         df = read_csv(file_object, sep='\t', index_col=0, parse_dates=True)
         if self.settings['optimize_df']:
-            df = optimize_memory(df)
+            df = optimize_memory(
+                df,
+                categorise_numbers=self.settings['numbers_as_categories'],
+                categorise_booleans=self.settings['booleans_as_categories']
+            )
         return df
 
     def load_object(self, path, variable_name, importer=None, to_globals=True):

@@ -48,7 +48,7 @@ class ParametresValidator:
         """Valid Python identifier"""
         assert param.isidentifier()
         return True
-    
+
     def one_or_many_valid_id(self, param: str):
         for v in split_variables(param):
             assert v.isidentifier()
@@ -58,7 +58,7 @@ class ParametresValidator:
         """Hash method, one of CRC32 or SHA256"""
         assert param in {'CRC32', 'SHA256'}
         return True
-        
+
     def hash(self, param: str):
         """Hash from CRC32 or SHA256"""
         if len(param) == 8 or len(param) == 64:

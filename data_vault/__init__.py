@@ -34,9 +34,14 @@ class VaultMagics(Magics):
         'timestamp': True,
         'metadata': True,
         'logs_path': '{path}.vault.log.gz',
-        'gzip_logs': True
+        'gzip_logs': True,
+        # aggressive memory optimisation by categorising numbers
+        'numbers_as_categories': False,
+        'booleans_as_categories': False
         # 'allowed_duration': 30,  # seconds
     }
+
+    assert len(set([d[0] for d in defaults])) == len(defaults)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

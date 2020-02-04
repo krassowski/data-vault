@@ -62,11 +62,11 @@ class StoreAction(Action):
 
 class ImportAction(Action):
     """Load a variable(s) exported from a notebook arbitrary data from the active storage.
-        
+
     > %vault from notebook_path import variable
     > %vault from notebook_path import variable with your_function as variable
     > %vault import 'file.tsv' with your_function as variable
-        
+
     It also allows you to specify custom import function, which:
         - has to be available in the global or local namespace
         - should accept a file object
@@ -80,12 +80,12 @@ class ImportAction(Action):
         path = arguments['from']
         variable = arguments['import']
         name = arguments.get('as', variable)
-        
+
         return self._import(
             {path + '/' + variable: name},
             arguments
         )
-    
+
     def from_module_import(self, arguments):
         path = arguments['from']
         variables = split_variables(arguments['import'])
@@ -144,7 +144,7 @@ class ImportAction(Action):
             }
         )
     }
-    
+
     def _import(self, variables_by_paths, arguments):
         importer = self.with_function(arguments)
 
@@ -179,7 +179,7 @@ class DeleteAction(Action):
             required={'del': params.path}
         )
     }
-    
+
     def _delete(self, arguments, path):
         # TODO test for folders, require all to remove a folder?
         # TODO: what to do about wildcards?
