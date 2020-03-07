@@ -60,13 +60,7 @@ We can now load the stored DataFrame in another (or the same) notebook:
 > Imported salaries (40CA7812) at Sunday, 08. Dec 2019 12:02
 
 Thanks to (optional) [memory optimizations](#memory-optimizations) we saved some RAM (87% as compared to unoptimized `pd.read_csv()` result).
-To track how many MB were saved use `--report_memory_gain` setting:
-
-```python
-%open_vault -p data/storage.zip --report_memory_gain True
-```
-
-which will display memory optimization results below imports, for example:
+To track how many MB were saved use `--report_memory_gain` setting which will display memory optimization results below imports, for example:
 
 > Reduced memory usage by 87.28%, from 0.79 MB to 0.10 MB.
 
@@ -185,7 +179,7 @@ of the level of security offered by this package will be easier.
 
 Pre-requirements:
 - Python 3.6+
-- 7zip (16.02+) (see [below](./Installing 7-zip) for Ubuntu and Mac commands)
+- 7zip (16.02+) (see [below](#installing-7-zip) for Ubuntu and Mac commands)
 
 ### Installation:
 
