@@ -3,6 +3,7 @@
 [![codecov](https://codecov.io/gh/krassowski/data-vault/branch/master/graph/badge.svg)](https://codecov.io/gh/krassowski/data-vault)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/krassowski/data-vault/master?filepath=Example.ipynb)
+[![DOI](https://zenodo.org/badge/226589892.svg)](https://zenodo.org/badge/latestdoi/226589892)
 
 IPython magic for simple, organized, compressed and encrypted storage & transfer of files between notebooks.
 
