@@ -185,41 +185,27 @@ of the level of security offered by this package will be easier.
 
 Pre-requirements:
 - Python 3.6+
-- 7zip (16.02+)
+- 7zip (16.02+) (see [below](./Installing 7-zip) for Ubuntu and Mac commands)
 
-Installation:
+### Installation:
 
 ```bash
 pip3 install data_vault
 ```
 
-## Draft ideas for future
+### Installing 7-zip
 
-**not implemented, up for discussion**
+Installers for Windows can be downloaded from the [7-zip website](https://www.7-zip.org/download.html).
 
-### Simple filtering
+For other systems you can use packages from the default repositories:
 
-To enable high-performance subsetting a simple, grep-like pre-filtering is provided:
+#### Ubuntu
 
-Import only first five rows:
-```python
-%vault from notebook import large_frame.rows[:5] as large_frame_head
+```bash
+sudo apt-get install -y p7zip-full
 ```
 
-When subsetting, the use of `as` is required to prevent potential confusion of the original `large_frame` object with its subset.
-
-To import only rows including text "SNP":
-```python
-%vault from notebook import large_frame.grep("SNP") as large_frame_snps
-```
-    
-By design, no advanced filtering is intended at this step.
-
-However, if your file is too big to fit into memory and you need more advanced filtering,
-you can provide your custom import function to the low-level `load_storage_object` magic:
-
-```python
-def your_function(f):
-    return f.read()  # do some fancy filtering here
-%vault import 'notebook_path/variable.tsv' as variable with your_function
+#### Mac
+```bash
+brew install p7zip
 ```
