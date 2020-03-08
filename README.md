@@ -102,7 +102,7 @@ Syntax:
 Reproducibility:
 - promote good reproducible and traceable organization of files:
    - promote storage in plain text files and the use of DataFrame
-      - pickling is initially fun, but really try to change your class definitions and load your data again.
+      > pickling is often an easy solution, but it can cause hurtful problems in prototyping phase (which is what notebooks are often used for): if you pickle you objects, then change the class definition and attempt to load your data again you are likely to fail severly; this is why the plain text files are the default option in this package (but pickling is supported too!).
    - print out a short hashsum and human-readable datetime (always in UTC),
    - while providing even more details in cell metadata
 - allow to trace instances of the code being modified post execution
