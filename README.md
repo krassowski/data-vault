@@ -88,6 +88,8 @@ from pandas import read_excel
 %vault import 'cars.xlsx' as cars_dataset with read_excel
 ```
 
+More examples are available in the [Examples.ipynb](https://github.com/krassowski/data-vault/blob/master/Example.ipynb) notebook, which can be [run interactively in the browser](https://mybinder.org/v2/gh/krassowski/data-vault/master?filepath=Example.ipynb).
+
 ### Goals
 
 Syntax:
