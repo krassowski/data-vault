@@ -142,4 +142,7 @@ class VaultMagics(Magics):
 
 
 ip = get_ipython()
-ip.register_magics(VaultMagics)
+if ip:
+    ip.register_magics(VaultMagics)
+else:
+    warn('Could not register VaultMagics - are you running from IPython?')
