@@ -85,13 +85,11 @@ class VaultMagics(Magics):
         with opener(logs_path, mode='ta+') as f:
             f.write(json.dumps(metadata) + '\n')
 
-    @line_magic
-    def vault(self, line):
-        """Perform one of the available actions, print the description and save metadata in the cell."""
-        self._ensure_configured()
-
+    def extract_arguments(self, line):
         iterable = iter(clean_line(line))
-        arguments = {key: next(iterable) for key in iterable}
+        return {key: next(iterable) for key in iterable}
+
+    def select_action(self, arguments):
 
         actions = {
             action.main_keyword: action
@@ -101,10 +99,19 @@ class VaultMagics(Magics):
         requested_actions = set(actions).intersection(arguments)
         requested_action = one(requested_actions)
 
-        started = self._timestamp()
-
         action_class = actions[requested_action]
         action = action_class(vault=self.current_vault)
+        return action
+
+    @line_magic
+    def vault(self, line):
+        """Perform one of the available actions, print the description and save metadata in the cell."""
+        self._ensure_configured()
+
+        started = self._timestamp()
+
+        arguments = self.extract_arguments(line)
+        action = self.select_action(arguments)
         metadata = action.perform(arguments)
 
         finished = self._timestamp()
