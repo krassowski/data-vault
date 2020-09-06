@@ -1,0 +1,6 @@
+{
+  "title": "data-vault-lsp integration",
+  "description": "Data vault-lsp Language Server Protocol settings.",
+  "type": "object",
+  "jupyter.lab.shortcuts": []
+}

@@ -1,0 +1,60 @@
+{
+  "name": "@krassowski/data-vault-lsp",
+  "version": "0.1.0",
+  "description": "data-vault-lsp integration for JupyterLab ",
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension",
+    "data-vault",
+    "lsp",
+    "language-server-protocol"
+  ],
+  "homepage": "https://github.com/krassowski/data-vault",
+  "bugs": {
+    "url": "https://github.com/krassowski/data-vault/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": "Michał Krassowski",
+  "files": [
+    "{lib,style,schema,src}/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf,css,json,ts,tsx,txt,md}"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krassowski/data-vault.git"
+  },
+  "dependencies": {
+    "@krassowski/jupyterlab-lsp": "~2.0.0"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@jupyterlab/application": "^2.2.4",
+    "@jupyterlab/testutils": "~2.2.0",
+    "@babel/preset-env": "^7.4.3",
+    "typescript": "~3.9.5",
+    "@types/jest": "^23.3.11",
+    "@types/chai": "^4.1.7",
+    "ts-jest": "^24.0.2",
+    "jest": "^24.7.1",
+    "chai": "^4.2.0"
+  },
+  "jupyterlab": {
+    "extension": true,
+    "discovery": {
+      "server": {
+        "base": {
+          "name": "data-vault"
+        },
+        "managers": [
+          "pip"
+        ]
+      }
+    },
+    "schemaDir": "schema"
+  }
+}
