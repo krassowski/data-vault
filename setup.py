@@ -19,7 +19,7 @@ if __name__ == '__main__':
     setup(
         name='data_vault',
         packages=find_packages(),
-        version='0.4.1',
+        version='0.4.2',
         license='MIT',
         description='IPython magic for simple, organized, compressed and encrypted: storage & transfer of files between notebooks',
         long_description=get_long_description('README.md'),
