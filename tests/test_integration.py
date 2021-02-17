@@ -146,6 +146,15 @@ def test_store_with_exporter(tmpdir):
         data = read_csv(f, sep='|', index_col=0)
         assert x.equals(data)
 
+    import pandas
+
+    class Test:
+        def to_csv(path: str, df):
+            df.to_csv(path)
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in my_frames with Test.to_csv')
+
 
 def test_comments_in_magics(tmpdir):
     with warns(UserWarning, match='Encryption variable not set - no encryption will be used..*'):

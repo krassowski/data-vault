@@ -4,6 +4,7 @@ from collections import Counter
 
 from .vault import Vault
 from .frames import frame_manager
+from .parameters import get_dotted
 
 
 Metadata = Dict[str, Union[str, List[Dict]]]
@@ -181,7 +182,7 @@ class Action(ABC):
     def with_function(self, arguments):
         if 'with' in arguments:
             func_name = arguments['with']
-            return self.ipython_globals[func_name]
+            return get_dotted(self.ipython_globals, func_name)
         return None
 
     @classmethod

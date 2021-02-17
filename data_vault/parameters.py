@@ -4,6 +4,18 @@ from .parsing import split_variables, unquote
 # TODO, rewrite this part, the return True everywhere is bad... or differentiate between validators and probes? or always return, or always rise.
 
 
+def get_dotted(ipython_globals, param):
+    parts = param.split('.')
+    try:
+        # e.g. "import os.path", param="os.path"
+        return ipython_globals[param]
+    except KeyError:
+        value = ipython_globals[parts[0]]
+        for part in parts[1:]:
+            value = getattr(value, part)
+        return value
+
+
 class ParametresValidator:
 
     # TODO rename module to folder (or other way of locating something in the vault)?
@@ -23,14 +35,7 @@ class ParametresValidator:
         # 2. exists in the global namespace?
         ipython_globals = frame_manager.get_ipython_globals()
         try:
-            try:
-                # e.g. "import os.path", param="os.path"
-                return ipython_globals[param]
-            except KeyError:
-                value = ipython_globals[parts[0]]
-                for part in parts[1:]:
-                    value = getattr(value, part)
-                return value
+            return get_dotted(ipython_globals, param)
         except KeyError:
             raise NameError(f"{kind} '{param}' is not defined in the global namespace")
 
