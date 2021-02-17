@@ -17,12 +17,20 @@ class ParametresValidator:
 
     def _get_from_globals(self, param: str, kind: str):
         # 1. is a valid identifier?
-        if not param.isidentifier():
+        parts = param.split('.')
+        if not all([part.isidentifier() for part in parts]):
             raise ValueError(f"'{param}' is not a valid {kind} name")
         # 2. exists in the global namespace?
         ipython_globals = frame_manager.get_ipython_globals()
         try:
-            return ipython_globals[param]
+            try:
+                # e.g. "import os.path", param="os.path"
+                return ipython_globals[param]
+            except KeyError:
+                value = ipython_globals[parts[0]]
+                for part in parts[1:]:
+                    value = getattr(value, part)
+                return value
         except KeyError:
             raise NameError(f"{kind} '{param}' is not defined in the global namespace")
 
