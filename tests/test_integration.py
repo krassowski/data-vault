@@ -184,6 +184,16 @@ def test_del(tmpdir, mock_key, secure):
 
 
 @mark.parametrize('secure', ['--secure False', '-e KEY'])
+def test_del_not_in_namespace(tmpdir, mock_key, secure):
+    ipython.magic(f'open_vault --path {tmpdir}/archive.zip {secure}')
+    x = EXAMPLE_DATA_FRAME
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x as y in my_frames')
+        ipython.magic('vault del y from my_frames')
+
+
+@mark.parametrize('secure', ['--secure False', '-e KEY'])
 def test_exists_after_storage(tmpdir, mock_key, secure):
     ipython.magic(f'open_vault --path {tmpdir}/archive.zip {secure}')
     x = EXAMPLE_DATA_FRAME

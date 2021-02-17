@@ -173,7 +173,7 @@ class DeleteAction(Action):
 
     handlers = {
         delete_variable: Syntax(
-            required={'del': params.one_variable, 'from': params.module}
+            required={'del': params.valid_id, 'from': params.module}
         ),
         delete_path: Syntax(
             required={'del': params.path}
