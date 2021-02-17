@@ -1,28 +1,16 @@
+from pathlib import Path
 from setuptools import setup
 from setuptools import find_packages
-
-
-try:
-    from pypandoc import convert
-
-    def get_long_description(file_name):
-        return convert(file_name, 'rst', 'md')
-
-except ImportError:
-
-    def get_long_description(file_name):
-        with open(file_name) as f:
-            return f.read()
 
 
 if __name__ == '__main__':
     setup(
         name='data_vault',
         packages=find_packages(),
-        version='0.4.2',
+        version='0.4.3',
         license='MIT',
         description='IPython magic for simple, organized, compressed and encrypted: storage & transfer of files between notebooks',
-        long_description=get_long_description('README.md'),
+        long_description=Path('README.md').read_text(),
         author='Michal Krassowski',
         author_email='krassowski.michal+pypi@gmail.com',
         url='https://github.com/krassowski/data-vault',
