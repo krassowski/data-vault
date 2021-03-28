@@ -42,13 +42,22 @@ def optimize_memory(
             continue
 
         if len(values) / len(s) < categorical_threshold:
-            sorted_categories = sorted([v for v in values if not pd.isnull(v)])
-            df[column] = pd.Categorical(s, categories=sorted_categories, ordered=True)
+            try:
+                sorted_categories = sorted([v for v in values if not pd.isnull(v)])
+                ordered = True
+            except TypeError as e:
+                sorted_categories = None
+                ordered = False
+                print(f'Not sorting categories for {column}: {e}')
+            df[column] = pd.Categorical(s, categories=sorted_categories, ordered=ordered)
 
     after = df.memory_usage(deep=True).sum()
 
     if report:
         percent = (before - after) / before * 100
-        print(f'Reduced memory usage by {percent:.2f}%, from {mb(before):.2f} MB to {mb(after):.2f} MB.')
+        print(
+            f'Reduced memory usage by {percent:.2f}%,'
+            f' from {mb(before):.2f} MB to {mb(after):.2f} MB.'
+        )
 
     return df
