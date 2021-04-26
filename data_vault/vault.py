@@ -17,7 +17,7 @@ class Vault:
     def list_members(self, relative_to=None):
         return self.archive.list_members(relative_to=relative_to)
 
-    def _default_exporter(self, file_object, variable):
+    def _default_exporter(self, variable, file_object):
         # line terminator set to '\n' to have the same hashes between Unix and Windows
         return variable.to_csv(file_object, sep='\t', line_terminator='\n')
 
@@ -45,7 +45,20 @@ class Vault:
 
             try:
                 f.close()
-                exporter(f.name, value)
+                try:
+                    exporter(value, f.name)
+                except AttributeError as e:
+                    # json
+                    if str(e) != "'str' object has no attribute 'write'":
+                        raise
+                    with open(f.name, 'w') as f2:
+                        exporter(value, f2)
+                except TypeError as e:
+                    # pickle
+                    if str(e) != "file must have a 'write' attribute":
+                        raise
+                    with open(f.name, 'wb') as f2:
+                        exporter(value, f2)
                 archive.add_file(f.name, rename=path)
             except Exception as e:
                 raise e
