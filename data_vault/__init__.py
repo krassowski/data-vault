@@ -60,8 +60,8 @@ class VaultMagics(Magics):
     @needs_local_scope
     @line_magic
     def open_vault(self, line, local_ns=None):
-        frame_manager.ipython_globals = local_ns
         """Open a zip archive for the vault. Once opened, all subsequent `%vault` magics operate on this archive."""
+        frame_manager.ipython_globals = local_ns
         self.settings = parse_arguments(line, self.defaults)
         self.current_vault = Vault(self.settings)
         if self.settings['secure'] and not self.settings['encryption_variable']:
