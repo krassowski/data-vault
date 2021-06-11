@@ -16,7 +16,7 @@ def get_dotted(ipython_globals, param):
         return value
 
 
-class ParametresValidator:
+class ParametersValidator:
 
     # TODO rename module to folder (or other way of locating something in the vault)?
     def module(self, param: str):

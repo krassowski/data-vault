@@ -1,10 +1,10 @@
 from pytest import raises
-from data_vault.parameters import ParametresValidator
+from data_vault.parameters import ParametersValidator
 from test_integration import patch_ipython_globals
 
 
 def test_method():
-    validator = ParametresValidator()
+    validator = ParametersValidator()
     import json
     with patch_ipython_globals({'json': json}):
         assert validator.function('json.loads')

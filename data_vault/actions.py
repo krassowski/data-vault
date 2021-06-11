@@ -1,9 +1,9 @@
 from .action import Action, Syntax
-from .parameters import ParametresValidator
+from .parameters import ParametersValidator
 from .parsing import split_variables, unquote
 from .dynamic_vault import DynamicVault
 
-params = ParametresValidator()
+params = ParametersValidator()
 
 
 class StoreAction(Action):

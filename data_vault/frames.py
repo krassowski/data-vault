@@ -1,28 +1,12 @@
-import inspect
-
-
 class FrameManager:
     """Just to make unit testing easier"""
 
-    ipython_frame_prefix = '<ipython-input-'
-
-    def find_ipython_frame(self, frames):
-        for frame in frames:
-            if frame.filename.startswith(self.ipython_frame_prefix):
-                return frame
-        return None
-
-    def ensure_frame(self, frame):
-        if not frame:
-            raise Exception('Could not find ipython frame in stack')
-
-    def get_frames(self):
-        return inspect.stack()
+    def __init__(self, ipython_globals=None):
+        self.ipython_globals = ipython_globals
 
     def get_ipython_globals(self):
-        frame = self.find_ipython_frame(self.get_frames())
-        self.ensure_frame(frame)
-        return frame.frame.f_globals
+        assert self.ipython_globals
+        return self.ipython_globals
 
 
 frame_manager = FrameManager()

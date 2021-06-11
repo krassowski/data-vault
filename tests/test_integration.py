@@ -136,7 +136,7 @@ def test_store_with_exporter(tmpdir):
     ipython.magic(f'open_vault --path {tmpdir}/archive.zip --secure False')
     x = EXAMPLE_DATA_FRAME
 
-    def pipe_delimited(path: str, df):
+    def pipe_delimited(df, path: str):
         df.to_csv(path, sep='|')
 
     with patch_ipython_globals(locals()):
@@ -146,14 +146,22 @@ def test_store_with_exporter(tmpdir):
         data = read_csv(f, sep='|', index_col=0)
         assert x.equals(data)
 
-    import pandas
+    import json
 
-    class Test:
-        def to_csv(path: str, df):
-            df.to_csv(path)
+    x = {'test': 1}
 
     with patch_ipython_globals(locals()):
-        ipython.magic('vault store x in my_frames with Test.to_csv')
+        ipython.magic('vault store x in my_json with json.dump')
+
+    with file_from_storage(f'{tmpdir}/archive.zip', 'my_json/x') as f:
+        assert x == json.load(f)
+
+    import pickle
+
+    with patch_ipython_globals(locals()):
+        ipython.magic('vault store x in my_jars with pickle.dump')
+        #ipython.magic('vault import x from my_jars as l with pickle.load')
+        #assert x == l
 
 
 def test_comments_in_magics(tmpdir):

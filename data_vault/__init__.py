@@ -6,10 +6,11 @@ from datetime import datetime
 
 from IPython.display import display, Markdown, Code
 from IPython import get_ipython
-from IPython.core.magic import Magics, magics_class, line_magic
+from IPython.core.magic import Magics, magics_class, line_magic, needs_local_scope
 
 from .action import Action
 from .actions import StoreAction, ImportAction, DeleteAction, AssertAction
+from .frames import frame_manager
 from .parsing import parse_arguments, clean_line
 from .vault import Vault
 
@@ -56,8 +57,10 @@ class VaultMagics(Magics):
         AssertAction
     ]
 
+    @needs_local_scope
     @line_magic
-    def open_vault(self, line):
+    def open_vault(self, line, local_ns=None):
+        frame_manager.ipython_globals = local_ns
         """Open a zip archive for the vault. Once opened, all subsequent `%vault` magics operate on this archive."""
         self.settings = parse_arguments(line, self.defaults)
         self.current_vault = Vault(self.settings)
@@ -103,10 +106,12 @@ class VaultMagics(Magics):
         action = action_class(vault=self.current_vault)
         return action
 
+    @needs_local_scope
     @line_magic
-    def vault(self, line):
+    def vault(self, line, local_ns=None):
         """Perform one of the available actions, print the description and save metadata in the cell."""
         self._ensure_configured()
+        frame_manager.ipython_globals = local_ns
 
         started = self._timestamp()
 
