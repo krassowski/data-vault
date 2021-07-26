@@ -1,7 +1,7 @@
 import subprocess
 from contextlib import contextmanager
 from pathlib import Path
-from zipfile import ZipFile
+from zipfile import ZipFile, ZipInfo
 
 
 class SevenZip:
@@ -89,6 +89,10 @@ class SevenZip:
 
     def delete(self, file_to_remove: str):
         return self._execute('d', file_to_remove)
+
+    def get_info(self, path) -> ZipInfo:
+        with ZipFile(self.path) as archive:
+            return archive.getinfo(path)
 
     def list_members(self, relative_to=''):
         with ZipFile(self.path) as archive:

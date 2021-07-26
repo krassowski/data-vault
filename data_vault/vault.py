@@ -1,6 +1,9 @@
 from tempfile import NamedTemporaryFile
+from io import BytesIO
 import os
+import hashlib
 from typing import Dict
+import zlib
 
 from pandas import read_csv
 
@@ -107,15 +110,19 @@ class Vault:
             importer = self._default_importer
 
         archive = self.archive
+        info = archive.get_info(path)
 
         with archive.open(path) as f:
-            obj = importer(f)
+            content = f.read()
+            crc_as_int = zlib.crc32(content)
+            new_checksum_crc = hex(crc_as_int)[2:].upper()
+            new_checksum_sha = hashlib.sha256(content).hexdigest().upper()
+            obj = importer(BytesIO(content))
             if to_globals:
                 frame_manager.get_ipython_globals()[variable_name] = obj
 
-        new_checksum_crc = archive.calc_checksum(path, method='CRC32')
-        new_checksum_sha = archive.calc_checksum(path, method='SHA256')
-        archive.check_integrity()
+        # check integrity of a single file
+        assert info.CRC == crc_as_int
 
         metadata = {
             'new_file': {
@@ -129,6 +136,9 @@ class Vault:
             return metadata
         else:
             return obj
+
+    def check_integrity(self):
+        self.archive.check_integrity()
 
     def remove_object(self, path):
 
