@@ -2,6 +2,7 @@ import subprocess
 from contextlib import contextmanager
 from pathlib import Path
 from zipfile import ZipFile, ZipInfo
+from io import BytesIO
 
 
 class SevenZip:
@@ -13,21 +14,30 @@ class SevenZip:
         self.password = password
 
     @contextmanager
-    def open(self, file_path, mode='r', password: str = None):
+    def open(self, file_path, mode='r', password: str = None, use_7z: bool = True):
         password = password or self.password
 
-        if password:
-            password = password.encode()
+        if use_7z:
+            yield BytesIO(self._execute(
+                'e', file_path, '-so', *self._password_arg(password),
+                decode=False, expect_ok_message=False
+            ))
+        else:
+            if password:
+                password = password.encode()
 
-        with ZipFile(self.path) as archive:
-            yield archive.open(file_path, mode=mode, pwd=password)
+            with ZipFile(self.path) as archive:
+                yield archive.open(file_path, mode=mode, pwd=password)
 
-    def _execute(self, command, *args):
+    def _execute(self, command, *args, decode: bool = True, expect_ok_message: bool = True):
         o = subprocess.check_output(
             [self.command, command, self.path, *args]
         )
-        assert b'Everything is Ok' in o
-        return o.decode('utf-8')
+        if expect_ok_message:
+            assert b'Everything is Ok' in o
+        if decode:
+            o = o.decode('utf-8')
+        return o
 
     def rename(self, old_path: str, new_path: str):
         return self._execute('rn', old_path, new_path)
