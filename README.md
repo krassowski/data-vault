@@ -1,6 +1,5 @@
 # IPython data-vault
-[![Build Status](https://travis-ci.org/krassowski/data-vault.svg?branch=master)](https://travis-ci.org/krassowski/data-vault)
-[![codecov](https://codecov.io/gh/krassowski/data-vault/branch/master/graph/badge.svg)](https://codecov.io/gh/krassowski/data-vault)
+[![tests](https://github.com/krassowski/data-vault/workflows/test/badge.svg)](https://github.com/krassowski/data-vault/actions?query=workflow%3test+branch%3Amaster)
 ![CodeQL](https://github.com/krassowski/data-vault/workflows/CodeQL/badge.svg)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/krassowski/data-vault/master?filepath=Example.ipynb)
@@ -193,9 +192,7 @@ pip3 install data_vault
 
 ### Installing 7-zip
 
-Installers for Windows can be downloaded from the [7-zip website](https://www.7-zip.org/download.html).
-
-For other systems you can use packages from the default repositories:
+You can use p7zip packages from the default repositories:
 
 #### Ubuntu
 
@@ -207,3 +204,11 @@ sudo apt-get install -y p7zip-full
 ```bash
 brew install p7zip
 ```
+
+#### Windows
+
+
+<s>Installers for Windows can be downloaded from the [7-zip website](https://www.7-zip.org/download.html).</s>
+
+Windows is not supported as it has known issues.
+
