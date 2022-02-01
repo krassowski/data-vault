@@ -1,5 +1,5 @@
 # IPython data-vault
-[![tests](https://github.com/krassowski/data-vault/workflows/test/badge.svg)](https://github.com/krassowski/data-vault/actions?query=workflow%3test+branch%3Amaster)
+[![tests](https://github.com/krassowski/data-vault/workflows/tests/badge.svg)](https://github.com/krassowski/data-vault/actions/workflows/tests.yml)
 ![CodeQL](https://github.com/krassowski/data-vault/workflows/CodeQL/badge.svg)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](http://choosealicense.com/licenses/mit/)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/krassowski/data-vault/master?filepath=Example.ipynb)
