@@ -4,6 +4,7 @@ import os
 import hashlib
 from typing import Dict
 import zlib
+from warnings import warn
 
 from pandas import read_csv
 
@@ -122,7 +123,15 @@ class Vault:
                 frame_manager.get_ipython_globals()[variable_name] = obj
 
         # check integrity of a single file
-        assert info.CRC == crc_as_int
+        if info.CRC != crc_as_int:
+            if info.CRC == 0:
+                # https://sourceforge.net/p/sevenzip/discussion/45798/thread/c284a85f3f/
+                warn(
+                    'CRC not found, cannot verify integrity (note:'
+                    ' this is expected for newer versions of 7zip when using AES encryption)'
+                )
+            else:
+                raise ValueError(f'CRC do not match: {info.CRC} { crc_as_int}')
 
         metadata = {
             'new_file': {
