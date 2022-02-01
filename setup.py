@@ -9,7 +9,7 @@ if __name__ == '__main__':
         packages=find_packages(),
         version='0.4.4',
         license='MIT',
-        description='IPython magic for simple, organized, compressed and encrypted: storage & transfer of files between notebooks',
+        description='IPython magic for simple, organized, compressed and encrypted storage of files',
         long_description=Path('README.md').read_text(),
         author='Michal Krassowski',
         author_email='krassowski.michal+pypi@gmail.com',
@@ -32,7 +32,9 @@ if __name__ == '__main__':
             'Intended Audience :: Developers',
             'Intended Audience :: Science/Research',
             'Programming Language :: Python :: 3.6',
-            'Programming Language :: Python :: 3.7'
+            'Programming Language :: Python :: 3.7',
+            'Programming Language :: Python :: 3.8',
+            'Programming Language :: Python :: 3.9'
         ],
         install_requires=[
             'pandas', 'IPython'

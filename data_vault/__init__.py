@@ -4,7 +4,7 @@ from typing import List
 from warnings import warn
 from datetime import datetime
 
-from IPython.display import display, Markdown, Code
+from IPython.display import display, Markdown
 from IPython import get_ipython
 from IPython.core.magic import Magics, magics_class, line_magic, needs_local_scope
 
@@ -121,7 +121,7 @@ class VaultMagics(Magics):
 
         finished = self._timestamp()
 
-        #if finished - started > settings['allowed_duration']:
+        # if finished - started > settings['allowed_duration']:
         # warn that the operations took longer than expected
 
         metadata['started'] = started.isoformat()

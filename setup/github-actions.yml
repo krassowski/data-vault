@@ -1,0 +1,13 @@
+name: test-env
+
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  - wheel
+  - p7zip
+  - pip
+  - pip:
+    - -r ../setup/requirements.txt
+    - -r ../tests/requirements.txt

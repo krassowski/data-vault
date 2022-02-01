@@ -1,7 +1,8 @@
 from .frames import frame_manager
 from .parsing import split_variables, unquote
 
-# TODO, rewrite this part, the return True everywhere is bad... or differentiate between validators and probes? or always return, or always rise.
+# TODO, rewrite this part, the return True everywhere is bad... or differentiate between validators and probes?
+# or always return, or always rise.
 
 
 def get_dotted(ipython_globals, param):
@@ -54,7 +55,7 @@ class ParametersValidator:
         """Valid Python function"""
         function = self._get_from_globals(param, 'function')
         if not callable(function):
-            raise ValueError(f'not a function')
+            raise ValueError(f'{function} is not a function')
         return True
 
     def valid_id(self, param: str):

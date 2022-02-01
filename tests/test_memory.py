@@ -29,4 +29,3 @@ def test_optimize_memory():
 
     df_cat_num = optimize_memory(df, inplace=False, categorise_numbers=True)
     assert df_cat_num.repetitive_large_int.dtype == 'category'
-

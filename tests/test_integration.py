@@ -156,12 +156,12 @@ def test_store_with_exporter(tmpdir):
     with file_from_storage(f'{tmpdir}/archive.zip', 'my_json/x') as f:
         assert x == json.load(f)
 
-    import pickle
+    import pickle    # noqa
 
     with patch_ipython_globals(locals()):
         ipython.magic('vault store x in my_jars with pickle.dump')
-        #ipython.magic('vault import x from my_jars as l with pickle.load')
-        #assert x == l
+        # ipython.magic('vault import x from my_jars as l with pickle.load')
+        # assert x == l
 
 
 def test_comments_in_magics(tmpdir):
