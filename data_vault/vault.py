@@ -144,7 +144,7 @@ class Vault:
         if to_globals:
             return metadata
         else:
-            return obj
+            return obj, metadata
 
     def check_integrity(self):
         self.archive.check_integrity()

@@ -2,13 +2,11 @@ import gzip
 import json
 from typing import List
 from warnings import warn
-from datetime import datetime
 
-from IPython.display import display, Markdown
 from IPython import get_ipython
 from IPython.core.magic import Magics, magics_class, line_magic, needs_local_scope
 
-from .action import Action
+from .action import Action, record_action
 from .actions import StoreAction, ImportAction, DeleteAction, AssertAction
 from .frames import frame_manager
 from .parsing import parse_arguments, clean_line
@@ -113,44 +111,26 @@ class VaultMagics(Magics):
         self._ensure_configured()
         frame_manager.ipython_globals = local_ns
 
-        started = self._timestamp()
-
         arguments = self.extract_arguments(line)
         action = self.select_action(arguments)
-        metadata = action.perform(arguments)
 
-        finished = self._timestamp()
+        with record_action(
+            command=line,
+            verb=action.verb,
+            display_timestamp=self.settings['timestamp'],
+            display_metadata=self.settings['metadata']
+        ) as metadata:
+            action_metadata = action.perform(arguments)
+            metadata.update(action_metadata)
 
         # if finished - started > settings['allowed_duration']:
         # warn that the operations took longer than expected
 
-        metadata['started'] = started.isoformat()
-        metadata['finished'] = finished.isoformat()
-        metadata['finished_human_readable'] = finished.strftime('%A, %d. %b %Y %H:%M')
-        metadata['command'] = line
-
         self.append_to_logs(metadata)
-
-        display(Markdown(
-            (
-                action.short_stamp(metadata)
-                if self.settings['timestamp'] else
-                None
-            ),
-            metadata=(
-                metadata
-                if self.settings['metadata'] else
-                None
-            )
-        ))
 
     vault.__doc__ += '\n\nVault commands:\n\n' + '\n'.join(
         [action.explain() for action in actions]
     )
-
-    @staticmethod
-    def _timestamp():
-        return datetime.utcnow()
 
 
 ip = get_ipython()

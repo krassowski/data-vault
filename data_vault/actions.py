@@ -114,7 +114,12 @@ class ImportAction(Action):
         if 'as' not in arguments:
             path = parent
 
-        dynamic_vault = DynamicVault(path=path, vault=self.vault)
+        dynamic_vault = DynamicVault(
+            path=path,
+            vault=self.vault,
+            display_timestamp=True,
+            display_metadata=True
+        )
         self.ipython_globals[name] = dynamic_vault
 
         return []
