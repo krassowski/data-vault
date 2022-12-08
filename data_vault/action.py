@@ -1,6 +1,10 @@
 from typing import Dict, Callable, List, Union
 from abc import ABC, abstractproperty
 from collections import Counter
+from contextlib import contextmanager
+from datetime import datetime
+
+from IPython.display import display, Markdown
 
 from .vault import Vault
 from .frames import frame_manager
@@ -8,6 +12,65 @@ from .parameters import get_dotted
 
 
 Metadata = Dict[str, Union[str, List[Dict]]]
+
+
+def short_stamp(verb: str, metadata: Metadata) -> str:
+    """Return short, human readable description of the action"""
+
+    def repr_result(result, hash_method='crc32'):
+        hashcodes = [
+            f'{result[file][hash_method]}'
+            for file in ['old_file', 'new_file']
+            if file in result
+        ]
+        return f"`{result['subject']}`" + ' (' + ' → '.join(hashcodes) + ')'
+
+    results_n = len(metadata['result'])
+
+    return (
+        verb.capitalize()
+        + (':\n\n - ' if results_n > 1 else ' ')
+        + '\n - '.join([
+            repr_result(result)
+            for result in metadata['result']
+        ])
+        + ('\n\n' if results_n > 1 else ' ')
+        + 'at '
+        + metadata['finished_human_readable']
+    )
+
+
+@contextmanager
+def record_action(
+    command: str,
+    verb: str,
+    display_timestamp: bool,
+    display_metadata: bool
+):
+    started = timestamp()
+    metadata: Dict = {}
+    yield metadata
+    finished = timestamp()
+    metadata['started'] = started.isoformat()
+    metadata['finished'] = finished.isoformat()
+    metadata['finished_human_readable'] = finished.strftime('%A, %d. %b %Y %H:%M')
+    metadata['command'] = command
+    display(Markdown(
+        (
+            short_stamp(verb, metadata)
+            if display_timestamp else
+            None
+        ),
+        metadata=(
+            metadata
+            if display_metadata else
+            None
+        )
+    ))
+
+
+def timestamp():
+    return datetime.utcnow()
 
 
 class Syntax:
@@ -149,31 +212,6 @@ class Action(ABC):
             'action': self.main_keyword,
             'result': bound_handler(arguments)
         }
-
-    def short_stamp(self, metadata: Metadata) -> str:
-        """Return short, human readable description of the action"""
-
-        def repr_result(result, hash_method='crc32'):
-            hashcodes = [
-                f'{result[file][hash_method]}'
-                for file in ['old_file', 'new_file']
-                if file in result
-            ]
-            return f"`{result['subject']}`" + ' (' + ' → '.join(hashcodes) + ')'
-
-        results_n = len(metadata['result'])
-
-        return (
-            self.verb.capitalize()
-            + (':\n\n - ' if results_n > 1 else ' ')
-            + '\n - '.join([
-                repr_result(result)
-                for result in metadata['result']
-            ])
-            + ('\n\n' if results_n > 1 else ' ')
-            + 'at '
-            + metadata['finished_human_readable']
-        )
 
     @property
     def ipython_globals(self):
